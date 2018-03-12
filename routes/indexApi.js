@@ -8,9 +8,7 @@ const router = express.Router();
 /*
   APIs
 */
-router.get('/pokemon', pokemonController.pokemons);
 router.get('/pokemon/:identifier', pokemonController.single);
-router.get('/attack', attackController.attacks);
 router.get('/attack/:attackId', attackController.single);
 router.get('/battle/:pokemon1Identifier/:pokemon2Identifier', battleController.battle);
 

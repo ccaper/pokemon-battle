@@ -2,7 +2,11 @@ const axios = require('axios');
 const { random } = require('lodash');
 const { uniq } = require('lodash');
 
-const { getIdFromUrl } = require('../utils/getIdFromUrl');
+function getIdFromUrl(url) {
+  const urlComponents = url.split('/');
+  const id = parseInt(urlComponents[urlComponents.length - 2], 10);
+  return id;
+}
 
 function stripPokemonResponse(pokemonResponse) {
   const strippedPokemonResponse = {
