@@ -339,12 +339,33 @@ function getAttacksInfo(pokemon1Attack, pokemon2Attack, baseUrl, cache, pokemon1
   });
 }
 
+/*
+* Sets power to 0 for player1 and player2's attack power for non damaging attacks
+*    since non damaging attacks have power as null in pokemon API attack info
+*
+* pokemon1AttackInfo: player1's pokemon attack info
+* pokemon2AttackInfo: player2's pokemon attack info
+*
+* returns: an object containing fixed power for player1 and player2 attacks
+*/
 function fixNonNonDamaginAttacks(pokemon1AttackInfo, pokemon2AttackInfo) {
   const pokemon1AttackPower = fixNonDamagingAttack(pokemon1AttackInfo.power);
   const pokemon2AttackPower = fixNonDamagingAttack(pokemon2AttackInfo.power);
   return { pokemon1AttackPower, pokemon2AttackPower };
 }
 
+/*
+* Performs the battle rounds between two players until 1 player's HP is less
+*   than 0.
+*
+* pokemon1: player1's pokemon
+* pokemon2: player2's pokemon
+* baseUrl: local app's base URL
+* cache: complete cache (may contain non attacks in cache, such as pokemon info)
+*
+* returns: a promise that resolves to an array containing the JSON for the history
+*    of the rounds of the battle
+*/
 function performBattle(pokemon1, pokemon2, baseUrl, cache) {
   return new Promise(async (resolve) => {
     const rounds = [];
