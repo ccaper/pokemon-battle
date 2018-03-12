@@ -1,5 +1,19 @@
 const { getApiDataWithRetries } = require('../utils/getApiData');
 
+/*
+* Controller for Pokemon
+*/
+
+/*
+* Controller function to get single pokemon information.
+*
+* Route maps to /api/v1/pokemon/:identifier where identifier is either pokemon id pokemon name
+*
+* Before pokemon api hit, first checks if results in cache.  If not, fetches data
+*    from api, then caches results.
+*
+* Returns JSON of pokemon info
+*/
 exports.single = async (req, res) => {
   const { identifier } = req.params;
   const { myCache } = res.locals;

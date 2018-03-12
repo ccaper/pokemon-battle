@@ -2,12 +2,31 @@ const axios = require('axios');
 const { random } = require('lodash');
 const { uniq } = require('lodash');
 
+/*
+* Controller for pokemon Battle
+*/
+
+/*
+* Extract id embedded in URL.
+*
+* url: fully qualified url
+*
+* returns: id as number.
+*/
 function getIdFromUrl(url) {
   const urlComponents = url.split('/');
   const id = parseInt(urlComponents[urlComponents.length - 2], 10);
   return id;
 }
 
+/*
+* Strips pokemon API pokemon info to bare essentials required for battle.
+*
+* pokemonResponse: full pokemon info JSON response from pokemon api
+*
+* returns: stripped pokemon data JSON containing id, name, hp, array of attacks
+*    where each object in attacks array contains attack id and attack name
+*/
 function stripPokemonResponse(pokemonResponse) {
   const strippedPokemonResponse = {
     id: pokemonResponse.id,
@@ -21,6 +40,14 @@ function stripPokemonResponse(pokemonResponse) {
   return strippedPokemonResponse;
 }
 
+/*
+* Create pre battle data to show pokemons and there base hp
+*
+* pokemon1: player1 pokemon in battle
+* pokemon2: player2 pokemon in battle
+*
+* returns: pre battle pokemon JSON
+*/
 function createPreBattleData(pokemon1, pokemon2) {
   const preBattleData = {
     pokemon1: {
@@ -37,10 +64,31 @@ function createPreBattleData(pokemon1, pokemon2) {
   return preBattleData;
 }
 
+/*
+* Gets damage an attack can do to an opponent.
+*
+* attackPower: the pokemon's attack power to compute damage it can do
+*
+* returns: a float representing damage the attack power can do to an opponent,
+*    10% of the power
+*/
 function percentAttackPower(attackPower) {
   return attackPower * 0.1;
 }
 
+/*
+* Creates the JSON data for battle history for a particular battle round.
+*
+* rountCount: number represnting the battle round
+* pokemon1: player1 pokemon in battle
+* attack1: player1's random attack
+* attack1Power: damage player1's random attack can do
+* pokemon2: player2 pokemon in battle
+* attack2: player2's random attack
+* attack2Power: damage player2's random attack can do
+*
+* returns: JSON for battle history for a particular battle round
+*/
 function createBattleData(roundCount, pokemon1, attack1, attack1Power, pokemon2, attack2, attack2Power) {
   const round = {
     round: roundCount,
@@ -70,6 +118,14 @@ function createBattleData(roundCount, pokemon1, attack1, attack1Power, pokemon2,
   return round;
 }
 
+/*
+* Determins the winner after a complete battle.
+*
+* pokemon1: player1 pokemon in battle
+* pokemon2: player2 pokemon in battle
+*
+* returns: the pokemon with the highest HP after a complete battle
+*/
 function determineWinner(pokemon1, pokemon2) {
   if (pokemon1.hp > pokemon2.hp) {
     return pokemon1;
@@ -77,6 +133,15 @@ function determineWinner(pokemon1, pokemon2) {
   return pokemon2;
 }
 
+/*
+* Creates winner JSON after a complete battle for battle history.
+*
+* pokemon1: player1 pokemon in battle
+* pokemon2: player2 pokemon in battle
+* totalRounds: total rounds in battle
+*
+* returns winner JSON after a complete battle for battle history
+*/
 function createWinnerData(pokemon1, pokemon2, totalRounds) {
   const winner = determineWinner(pokemon1, pokemon2);
   const winnerData = {
@@ -87,6 +152,14 @@ function createWinnerData(pokemon1, pokemon2, totalRounds) {
   return winnerData;
 }
 
+/*
+* Attack a pokemon and compute damage to HP
+*
+* attackPower: damage power can do to a pokemon
+* pokemonHP: a pokemon's HP to subtract the damage from
+*
+* returns: pokemon's HP with attack damage done
+*/
 function attackPokemon(attackPower, pokemonHp) {
   return pokemonHp - percentAttackPower(attackPower);
 }
@@ -197,6 +270,13 @@ function performBattle(pokemon1, pokemon2, baseUrl, cache) {
   });
 }
 
+/*
+* Controller function for pokemon battle.
+*
+* Route maps to /api/v1//battle/:pokemon1Identifier/:pokemon2Identifier where identifier is either pokemon id pokemon name
+*
+* Returns JSON of pokemon battle history
+*/
 exports.battle = async (req, res) => {
   const { pokemon1Identifier, pokemon2Identifier } = req.params;
   const { myCache } = res.locals;
