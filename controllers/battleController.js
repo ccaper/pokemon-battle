@@ -164,6 +164,17 @@ function attackPokemon(attackPower, pokemonHp) {
   return pokemonHp - percentAttackPower(attackPower);
 }
 
+/*
+* Pokemon attack round.  Player1 attacks first, and player2 only attacks if HP
+*    above 0 after attack.
+*
+* pokemon1Hp: player1's HP
+* pokemon1AttackPower: damage player1's random attack can do to opponent
+* pokemon2Hp: player2's HP
+* pokemon2AttackPower: damage player2's random attack can do to opponent
+*
+* returns: object containing player1 and players2 HP's after an attack
+*/
 function attackPokemons(pokemon1Hp, pokemon1AttackPower, pokemon2Hp, pokemon2AttackPower) {
   const newPokemon2Hp = attackPokemon(pokemon1AttackPower, pokemon2Hp);
   let newPokemon1Hp = pokemon1Hp;
@@ -173,10 +184,27 @@ function attackPokemons(pokemon1Hp, pokemon1AttackPower, pokemon2Hp, pokemon2Att
   return { newPokemon1Hp, newPokemon2Hp };
 }
 
+/*
+* Some pokemon attack info has null for it's power.  This sets it to 0 if null.
+*
+* power: pokemon attack api power
+*
+* returns: 0 if null, otherwise the power
+*/
 function fixNonDamagingAttack(power) {
   return (power === null) ? 0 : power;
 }
 
+/*
+* Calls internal API to get pokemon's info from pokemon API.
+*
+* pokemon1Identifier: a pokemon's id or name for player1
+* pokemon2Identifier: a pokemon's id or name for player2
+* baseUrl: local app's base URL
+*
+* returns: a promise that resolves to an object containing pokemon API info for
+*    player1 and player2
+*/
 function getPokemons(pokemon1Identifier, pokemon2Identifier, baseUrl) {
   return new Promise(async (resolve) => {
     const pokemon1Promise = axios.get(`http://${baseUrl}/api/v1/pokemon/${pokemon1Identifier}`);
@@ -188,16 +216,45 @@ function getPokemons(pokemon1Identifier, pokemon2Identifier, baseUrl) {
   });
 }
 
+/*
+* Gets a random attack from a pokemon.
+*
+* pokemon: pokemon to get a random attack from
+*
+* returns: a pokemons random attack (object containing attack id and name)
+*/
 function getRandomAttack(pokemon) {
   return pokemon.attacks[random(0, pokemon.attacks.length - 1)];
 }
 
+/*
+* Gets random attacks for player1 and player2's pokemons
+*
+* pokemon1: player1's pokemon to get random attack
+* pokemon2: player2's pokemon to get random attack
+*
+* returns: and object containing the attacks (object containing attack id and name)
+*    for player1 and player2 pokemons
+*/
 function getRandomAttacks(pokemon1, pokemon2) {
   const pokemon1Attack = getRandomAttack(pokemon1);
   const pokemon2Attack = getRandomAttack(pokemon2);
   return { pokemon1Attack, pokemon2Attack };
 }
 
+/*
+* Logic if should get a future non cached attack.  We get attacks info in pairs (player1
+*    and player2 attack) from internal API.  This api caches the results.  If one
+*    of the two requests for attack info has been cached, might as well pick another
+*    attack to fetch and cache for possible performance improvements should that
+*    attack get picked later.
+*
+* pokemon1Attack: the attack object for player1's random attack
+* pokemon2Attack: the attack object for player2's random attack
+* cacheAttackKeyAttackIds: array of attack id's in cache
+*
+* returns: true if only one attack request has been cached, otherwise false
+*/
 function shouldGetFutureNonCachedAttack(pokemon1Attack, pokemon2Attack, cacheAttackKeyAttackIds) {
   if ((cacheAttackKeyAttackIds.includes(pokemon1Attack.id) && !cacheAttackKeyAttackIds.includes(pokemon2Attack.id))
     ||
@@ -207,6 +264,16 @@ function shouldGetFutureNonCachedAttack(pokemon1Attack, pokemon2Attack, cacheAtt
   return false;
 }
 
+/*
+* Pick first non cached attack from either player1 or player2 pokemon's attacks
+*
+* cacheAttackKeyAttackIds: array of attack id's in cache
+* pokemon1: player1's pokemon
+* pokemon2: player2's pokemon
+*
+* returns: first non cached attack from either player1 or player2 pokemon's attacks
+*    if any available, otherwise null
+*/
 function pickAFutureNonCachedAttack(cacheAttackKeyAttackIds, pokemon1, pokemon2) {
   const combinedPokemonAttacks = uniq([...pokemon1.attacks.map(attack => attack.id), ...pokemon2.attacks.map(attack => attack.id)]);
   for (let i = 0; i < combinedPokemonAttacks.length; i += 1) {
@@ -217,6 +284,20 @@ function pickAFutureNonCachedAttack(cacheAttackKeyAttackIds, pokemon1, pokemon2)
   return null;
 }
 
+/*
+* If only 1 attack between player1 or player2's random attacks has been previously cached,
+*    get first non cached attack from either player1 or player2 pokemon's attacks
+*    to possibly increase performance.
+*
+* pokemon1Attack: player1's pokemon random attack
+* pokemon2Attack: player2's pokemon random attack
+* cache: complete cache (may contain non attacks in cache, such as pokemon info)
+* pokemon1: player1's pokemon
+* pokemon2: player2's pokemon
+*
+* returns: first non cached attack from either player1 or player2 pokemon's attacks
+*    if any available AND only one of two attacks previously cached, otherwise null
+*/
 function getFutureNonCachedAttack(pokemon1Attack, pokemon2Attack, cache, pokemon1, pokemon2) {
   const cacheAttackKeyAttackIds = cache.keys().filter(key => key.startsWith('attack-')).map(key1 => parseInt(key1.split('-')[1], 10));
   if (shouldGetFutureNonCachedAttack(pokemon1Attack, pokemon2Attack, cacheAttackKeyAttackIds)) {
@@ -225,6 +306,22 @@ function getFutureNonCachedAttack(pokemon1Attack, pokemon2Attack, cache, pokemon
   return null;
 }
 
+/*
+* Hits internal API to get attack info from pokemon API.  Internal API caches request.
+*    If only one attack has previously been cached, get first non cached attack
+*    from either player1 or player2's pokemon for possible performcance improvement
+*    in future.
+*
+* pokemon1Attack: player1's pokemon's random attack
+* pokemon2Attack: player2's pokemon's random attack
+* baseUrl: local app's base URL
+* cache: complete cache (may contain non attacks in cache, such as pokemon info)
+* pokemon1: player1's pokemon
+* pokemon2: player2's pokemon
+*
+* returns: a promise that resolves to an object containing the full information
+*    for player1 and player2's pokemon attack info
+*/
 function getAttacksInfo(pokemon1Attack, pokemon2Attack, baseUrl, cache, pokemon1, pokemon2) {
   return new Promise(async (resolve) => {
     const pokemon1AttackPromise = axios.get(`http://${baseUrl}/api/v1/attack/${pokemon1Attack.id}`);
