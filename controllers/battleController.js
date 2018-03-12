@@ -1,5 +1,6 @@
 const axios = require('axios');
 const { random } = require('lodash');
+const { uniq } = require('lodash');
 
 const { getIdFromUrl } = require('../utils/getIdFromUrl');
 
@@ -120,11 +121,44 @@ function getRandomAttacks(pokemon1, pokemon2) {
   return { pokemon1Attack, pokemon2Attack };
 }
 
-function getAttacksInfo(pokemon1Attack, pokemon2Attack, baseUrl) {
+function shouldGetFutureNonCachedAttack(pokemon1Attack, pokemon2Attack, cacheAttackKeyAttackIds) {
+  if ((cacheAttackKeyAttackIds.includes(pokemon1Attack.id) && !cacheAttackKeyAttackIds.includes(pokemon2Attack.id))
+    ||
+    (cacheAttackKeyAttackIds.includes(pokemon2Attack.id) && !cacheAttackKeyAttackIds.includes(pokemon1Attack.id))) {
+    return true;
+  }
+  return false;
+}
+
+function pickAFutureNonCachedAttack(cacheAttackKeyAttackIds, pokemon1, pokemon2) {
+  const combinedPokemonAttacks = uniq([...pokemon1.attacks.map(attack => attack.id), ...pokemon2.attacks.map(attack => attack.id)]);
+  for (let i = 0; i < combinedPokemonAttacks.length; i += 1) {
+    if (!cacheAttackKeyAttackIds.includes(combinedPokemonAttacks[i])) {
+      return combinedPokemonAttacks[i];
+    }
+  }
+  return null;
+}
+
+function getFutureNonCachedAttack(pokemon1Attack, pokemon2Attack, cache, pokemon1, pokemon2) {
+  const cacheAttackKeyAttackIds = cache.keys().filter(key => key.startsWith('attack-')).map(key1 => parseInt(key1.split('-')[1], 10));
+  if (shouldGetFutureNonCachedAttack(pokemon1Attack, pokemon2Attack, cacheAttackKeyAttackIds)) {
+    return pickAFutureNonCachedAttack(cacheAttackKeyAttackIds, pokemon1, pokemon2);
+  }
+  return null;
+}
+
+function getAttacksInfo(pokemon1Attack, pokemon2Attack, baseUrl, cache, pokemon1, pokemon2) {
   return new Promise(async (resolve) => {
     const pokemon1AttackPromise = axios.get(`http://${baseUrl}/api/v1/attack/${pokemon1Attack.id}`);
     const pokemon2AttackPromise = axios.get(`http://${baseUrl}/api/v1/attack/${pokemon2Attack.id}`);
-    const [pokemon1AttackResponse, pokemon2AttackResponse] = await Promise.all([pokemon1AttackPromise, pokemon2AttackPromise]);
+    const promises = [pokemon1AttackPromise, pokemon2AttackPromise];
+    const futureAttack = getFutureNonCachedAttack(pokemon1Attack, pokemon2Attack, cache, pokemon1, pokemon2);
+    if (futureAttack !== null) {
+      const futureAttackPromise = axios.get(`http://${baseUrl}/api/v1/attack/${futureAttack}`);
+      promises.push(futureAttackPromise);
+    }
+    const [pokemon1AttackResponse, pokemon2AttackResponse] = await Promise.all(promises);
     const pokemon1AttackInfo = pokemon1AttackResponse.data;
     const pokemon2AttackInfo = pokemon2AttackResponse.data;
     resolve({ pokemon1AttackInfo, pokemon2AttackInfo });
@@ -137,13 +171,13 @@ function fixNonNonDamaginAttacks(pokemon1AttackInfo, pokemon2AttackInfo) {
   return { pokemon1AttackPower, pokemon2AttackPower };
 }
 
-function performBattle(pokemon1, pokemon2, baseUrl) {
+function performBattle(pokemon1, pokemon2, baseUrl, cache) {
   return new Promise(async (resolve) => {
     const rounds = [];
     let roundCount = 1;
     while (pokemon1.hp > 0 && pokemon2.hp > 0) {
       const { pokemon1Attack, pokemon2Attack } = getRandomAttacks(pokemon1, pokemon2);
-      const { pokemon1AttackInfo, pokemon2AttackInfo } = await getAttacksInfo(pokemon1Attack, pokemon2Attack, baseUrl);
+      const { pokemon1AttackInfo, pokemon2AttackInfo } = await getAttacksInfo(pokemon1Attack, pokemon2Attack, baseUrl, cache, pokemon1, pokemon2);
       const { pokemon1AttackPower, pokemon2AttackPower } = fixNonNonDamaginAttacks(pokemon1AttackInfo, pokemon2AttackInfo);
       const { newPokemon1Hp, newPokemon2Hp } = attackPokemons(pokemon1.hp, pokemon1AttackPower, pokemon2.hp, pokemon2AttackPower);
       pokemon1.hp = newPokemon1Hp;
@@ -161,11 +195,12 @@ function performBattle(pokemon1, pokemon2, baseUrl) {
 
 exports.battle = async (req, res) => {
   const { pokemon1Identifier, pokemon2Identifier } = req.params;
+  const { myCache } = res.locals;
   const { pokemon1, pokemon2 } = await getPokemons(pokemon1Identifier, pokemon2Identifier, req.headers.host);
   console.log(`Starting battle for ${pokemon1.name} (${pokemon1.id}) vs ${pokemon2.name} (${pokemon2.id})`);
   const battleData = {};
   battleData.preBattleData = createPreBattleData(pokemon1, pokemon2);
-  battleData.rounds = await performBattle(pokemon1, pokemon2, req.headers.host);
+  battleData.rounds = await performBattle(pokemon1, pokemon2, req.headers.host, myCache);
   battleData.winner = createWinnerData(pokemon1, pokemon2, battleData.rounds.length);
   console.log(`Ending battle for ${pokemon1.name} (${pokemon1.id}) vs ${pokemon2.name} (${pokemon2.id}), winner ${battleData.winner.name} (${battleData.winner.id})`);
   res.json(battleData);
