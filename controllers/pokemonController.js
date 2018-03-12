@@ -1,7 +1,7 @@
-const axios = require('axios');
 const { orderBy } = require('lodash');
 
 const { getIdFromUrl } = require('../utils/getIdFromUrl');
+const { getApiDataWithRetries } = require('../utils/getApiData');
 
 exports.single = async (req, res) => {
   const { identifier } = req.params;
@@ -13,20 +13,14 @@ exports.single = async (req, res) => {
     return;
   }
   console.log(`cache miss for pokemon ${identifier}`);
-  let apiAttempt = 0;
-  let responseErrorStatus = null;
-  while (apiAttempt < 3) {
-    try {
-      const response = await (axios.get(`http://pokeapi.co/api/v2/pokemon/${identifier}/`));
-      myCache.set(`pokemon-${identifier}`, response.data);
-      res.json(response.data);
-      return;
-    } catch (error) {
-      apiAttempt += 1;
-      responseErrorStatus = error.response.status;
-    }
+  try {
+    const response = await getApiDataWithRetries(`http://pokeapi.co/api/v2/pokemon/${identifier}/`);
+    myCache.set(`pokemon-${identifier}`, response);
+    res.json(response);
+    return;
+  } catch (error) {
+    res.sendStatus(error);
   }
-  res.sendStatus(responseErrorStatus);
 };
 
 exports.pokemons = async (req, res) => {
@@ -38,23 +32,17 @@ exports.pokemons = async (req, res) => {
     return;
   }
   console.log('cache miss for pokemons');
-  let apiAttempt = 0;
-  let responseErrorStatus = null;
-  while (apiAttempt < 3) {
-    try {
-      const response = await (axios.get('https://pokeapi.co/api/v2/pokemon/?limit=2000'));
-      const pokemons = orderBy(response.data.results.map((pokemon) => {
-        const { url, name } = pokemon;
-        const id = getIdFromUrl(url);
-        return { id, name };
-      }), 'name');
-      myCache.set('pokemons', pokemons);
-      res.json(pokemons);
-      return;
-    } catch (error) {
-      apiAttempt += 1;
-      responseErrorStatus = error.response.status;
-    }
+  try {
+    const response = await getApiDataWithRetries('https://pokeapi.co/api/v2/pokemon/?limit=2000');
+    const pokemons = orderBy(response.results.map((pokemon) => {
+      const { url, name } = pokemon;
+      const id = getIdFromUrl(url);
+      return { id, name };
+    }), 'name');
+    myCache.set('pokemons', pokemons);
+    res.json(pokemons);
+    return;
+  } catch (error) {
+    res.sendStatus(error);
   }
-  res.sendStatus(responseErrorStatus);
 };
