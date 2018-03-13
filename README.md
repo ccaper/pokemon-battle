@@ -66,6 +66,10 @@ To run tests:
 
    http://localhost:7777/api/v1/battle/bulbasaur/ivysaur
 
+   **NOTE**: due to the slowness of the pokemon API, I recommend battling two pokemons
+   with limited attacks, so attacks cache and complete battle finishes quicker.
+   For example, http://localhost:7777/api/v1/battle/10/13
+
 ## Notes
 
 1. I have been difficulty with the pokemon api.  I'm often getting gateway timeouts (502 errors) or too many requests(429 errors).  And the api is at times EXTREMELY slow to respond, causing my Postman client to timeout.  As a result to the 502 errors, I wrapped pokemon API calls in 3 tryouts before failing.  As a result of the 429 errors, and to increase performance, I implemented a cache that saves API responses, and uses the cache over a second fetch if the same pokemon or attack is later fetched.
