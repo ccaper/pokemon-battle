@@ -66,13 +66,20 @@ To run tests:
 
    http://localhost:7777/api/v1/battle/bulbasaur/ivysaur
 
-   **NOTE**: due to the slowness of the pokemon API, I recommend battling two pokemons
+   **NOTE**: due to the slowness of the pokemon API AND aggressive pokemon API
+   throttling API requests (429 errors), I recommend battling two pokemons
    with limited attacks, so attacks cache and complete battle finishes quicker.
    For example, http://localhost:7777/api/v1/battle/10/13
 
 ## Notes
 
-1. I have been difficulty with the pokemon api.  I'm often getting gateway timeouts (502 errors) or too many requests(429 errors).  And the api is at times EXTREMELY slow to respond, causing my Postman client to timeout.  As a result to the 502 errors, I wrapped pokemon API calls in 3 tryouts before failing.  As a result of the 429 errors, and to increase performance, I implemented a cache that saves API responses, and uses the cache over a second fetch if the same pokemon or attack is later fetched.
+1. I have been difficulty with the pokemon api Server.  I'm often getting gateway
+timeouts (502 errors) or too many requests(429 errors; appears they are recently
+aggressively throttling requests).  And the api is at times EXTREMELY slow to respond,
+causing my Postman client to timeout.  As a result to the 502 errors, I wrapped pokemon
+API calls in 3 tryouts before failing.  As a result of the 429 errors, and to increase
+performance, I implemented a cache that saves API responses, and uses the cache over
+a second fetch if the same pokemon or attack is later fetched.
 2. I noticed that some attacks when fetched from the pokemon API for moves have an explicit null set for power.  Effectively a non damaging attack.  I clean this up as a 0 power.
 3. When in battle, I fetch the attacks for player1 and player2 as a pair, using promise all, for performance, through my own local app API, which is caching the pokemon API response.  To further increase performance, should ONLY one of those attack info requests already be cached, I put in a third attack from either player 1 or player 2 pokemon attacks that is the first non cached attack, if any available.  The thought is since I am using promise all, 2 attack requests take the same time as 1, so might as well request a future possible attack so it's now cached.
 4. I include log statements to show cache hits and misses.
