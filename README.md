@@ -3,18 +3,30 @@
 ## Description
 
 Build​ an​ ​API​ ​to​ ​battle​ ​Pokemon.​ ​Your​ ​API​ ​will​ ​call​ ​the​ ​public​ Pokemon​ ​API​ to​ get​ ​info (https://pokeapi.co/)
+
 The​ ​API​ ​should​ ​have​ ​3 ​routes:
+
 -Get​ ​single​ ​pokemon​ ​overview
+
   This​ ​will​ be​ ​a ​straight​ ​pass​ ​through​ ​to​ ​the​ ​pokemon​ ​API
+
 -Get​ ​single​ ​attack
+
   This​ ​will​ ​be​ ​a ​straight​ ​pass​ ​through​ ​to​ ​the​ ​pokemon​ ​API
+
 -Battle​ ​two​ ​Pokemon
+
   Take​ ​2 ​pokemon​ ​id's​ ​or​ ​names
+
   Find​ ​the​ ​HP​ ​for​ ​each​ ​of​ ​those​ ​characters.
+
   Find​ ​the​ ​Attacks​ ​and​ ​the​ ​power​ ​of​ ​those​ ​for​ ​each​ ​of​ ​those​ ​characters
+
   Start​ ​a ​random​ fight,​ where​ ​player​ ​1 ​starts​ ​and​ ​does​ ​a ​random​ ​attack,​ ​and​ ​it
     does​ ​HP​ ​damage​ ​of​ ​10%​ ​of​ ​the​ ​power​ of​ the​ ​attack​ ​to​ ​the​ ​other​ ​player
+
   Stop​ ​when​ ​one​ ​player​ ​is​ ​defeated
+
   Return​ ​the​ ​winner,​ and​ ​the​ ​history​ of​ ​the​ ​fight
 
 ## Instructions
