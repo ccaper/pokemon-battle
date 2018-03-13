@@ -410,19 +410,25 @@ function performBattle(pokemon1, pokemon2, baseUrl, cache) {
 exports.battle = async (req, res) => {
   const { pokemon1Identifier, pokemon2Identifier } = req.params;
   const { myCache } = res.locals;
-  const { pokemon1, pokemon2 } = await getPokemons(pokemon1Identifier, pokemon2Identifier, req.headers.host);
-  console.log(`Starting battle for ${pokemon1.name} (${pokemon1.id}) vs ${pokemon2.name} (${pokemon2.id})`);
-  const battleData = {};
-  battleData.preBattleData = createPreBattleData(pokemon1, pokemon2);
   try {
-    battleData.rounds = await performBattle(pokemon1, pokemon2, req.headers.host, myCache);
+    const { pokemon1, pokemon2 } = await getPokemons(pokemon1Identifier, pokemon2Identifier, req.headers.host);
+    console.log(`Starting battle for ${pokemon1.name} (${pokemon1.id}) vs ${pokemon2.name} (${pokemon2.id})`);
+    const battleData = {};
+    battleData.preBattleData = createPreBattleData(pokemon1, pokemon2);
+    try {
+      battleData.rounds = await performBattle(pokemon1, pokemon2, req.headers.host, myCache);
+    } catch (error) {
+      console.log(`Unrecoverable error trying to fetch attack data from pokemon API.  Battle ubruptly ended. (${error})`);
+      res.sendStatus(500);
+      return;
+    }
+    battleData.winner = createWinnerData(pokemon1, pokemon2, battleData.rounds.length);
+    console.log(`Ending battle for ${pokemon1.name} (${pokemon1.id}) vs ${pokemon2.name} (${pokemon2.id}), winner ${battleData.winner.name} (${battleData.winner.id})`);
+    res.json(battleData);
   } catch (error) {
-    console.log(`Unrecoverable error trying to fetch data from pokemon API.  Battle ubruptly ended. (${error})`);
-    res.sentStatus(error);
+    console.log(`Unrecoverable error trying to fetch pokemon data from pokemon API.  Battle ubruptly ended. (${error})`);
+    res.sendStatus(500);
   }
-  battleData.winner = createWinnerData(pokemon1, pokemon2, battleData.rounds.length);
-  console.log(`Ending battle for ${pokemon1.name} (${pokemon1.id}) vs ${pokemon2.name} (${pokemon2.id}), winner ${battleData.winner.name} (${battleData.winner.id})`);
-  res.json(battleData);
 };
 
 module.exports.getIdFromUrl = getIdFromUrl;
