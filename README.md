@@ -42,15 +42,15 @@ To run the application, please make sure you're running at least Node 7.
 
    identifier is either a pokemon numeric id or a pokemon name
 
-   example: `http://localhost:7777/api/v1/pokemon/1`
+   example: http://localhost:7777/api/v1/pokemon/1
 
-   `http://localhost:7777/api/v1/pokemon/bulbasaur`
+   http://localhost:7777/api/v1/pokemon/bulbasaur
 
 2. single​ ​attack: `http://localhost:7777/api/v1/attack/<id>`
 
    id is an attack numeric id
 
-   example: `http://localhost:7777/api/v1/attack/72`
+   example: http://localhost:7777/api/v1/attack/72
 
 3. battle: `http://localhost:7777/api/v1/battle/<identifier1>/<identifier2>`
 
@@ -58,9 +58,9 @@ To run the application, please make sure you're running at least Node 7.
 
    identifier2 is either a pokemon numeric id or a pokemon name for player 2
 
-   example: `http://localhost:7777/api/v1/battle/1/2`
+   example: http://localhost:7777/api/v1/battle/1/2
 
-   `http://localhost:7777/api/v1/battle/bulbasaur/ivysaur`
+   http://localhost:7777/api/v1/battle/bulbasaur/ivysaur
 
 ## Notes
 
@@ -72,6 +72,6 @@ To run the application, please make sure you're running at least Node 7.
 
 ## Other
 
-1. I have a simple HTML front end simply for showing 404.  Any non api route no match shows a 404 page.  For example `http://localhost:7777/`
-2. Any api route no match returns a 404.  For example `http://localhost:7777/api/v1/blah/72`
+1. I have a simple HTML front end simply for showing 404.  Any non api route no match shows a 404 page.  For example http://localhost:7777/
+2. Any api route no match returns a 404.  For example http://localhost:7777/api/v1/blah/72
 3. I versioned my api to v1, as api's should always be versioned.
