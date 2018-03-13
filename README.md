@@ -26,18 +26,29 @@ To run the application, please make sure you're running at least Node 7.
 
 ## Endpoints
 
-1. ​single​ ​pokemon​ ​overview: http://localhost:7777/api/v1/pokemon/<identifier>
+1. ​single​ ​pokemon​ ​overview: `http://localhost:7777/api/v1/pokemon/<identifier>`
+
    identifier is either a pokemon numeric id or a pokemon name
-   example: http://localhost:7777/api/v1/pokemon/1
-   http://localhost:7777/api/v1/pokemon/bulbasaur
-2. single​ ​attack: http://localhost:7777/api/v1/attack/<id>
+
+   example: `http://localhost:7777/api/v1/pokemon/1`
+
+   `http://localhost:7777/api/v1/pokemon/bulbasaur`
+
+2. single​ ​attack: `http://localhost:7777/api/v1/attack/<id>`
+
    id is an attack numeric id
-   example: http://localhost:7777/api/v1/attack/72
-3. battle: http://localhost:7777/api/v1/battle/<identifier1>/<identifier2>
+
+   example: `http://localhost:7777/api/v1/attack/72`
+
+3. battle: `http://localhost:7777/api/v1/battle/<identifier1>/<identifier2>`
+
    identifier1 is either a pokemon numeric id or a pokemon name for player 1
+
    identifier2 is either a pokemon numeric id or a pokemon name for player 2
-   example: http://localhost:7777/api/v1/battle/1/2
-   http://localhost:7777/api/v1/battle/bulbasaur/ivysaur
+
+   example: `http://localhost:7777/api/v1/battle/1/2`
+
+   `http://localhost:7777/api/v1/battle/bulbasaur/ivysaur`
 
 ## Notes
 
