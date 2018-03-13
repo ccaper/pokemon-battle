@@ -1,10 +1,13 @@
 const assert = require('assert');
 
-const { getIdFromUrl } = require('../controllers/battleController');
-const { percentAttackPower } = require('../controllers/battleController');
-const { determineWinner } = require('../controllers/battleController');
-const { attackPokemon } = require('../controllers/battleController');
-const { attackPokemons } = require('../controllers/battleController');
+const {
+  getIdFromUrl,
+  percentAttackPower,
+  determineWinner,
+  attackPokemon,
+  attackPokemons,
+  fixNonDamagingAttack
+} = require('../controllers/battleController');
 
 describe('battleController', () => {
   describe('#getIdFromUrl()', () => {
@@ -133,6 +136,24 @@ describe('battleController', () => {
       assert.equal(expectedPlayer1, newPokemon1Hp);
       const expectedPlayer2 = player2Hp - percentAttackPower(player1AttackPower);
       assert.equal(expectedPlayer2, newPokemon2Hp);
+    });
+  });
+});
+
+describe('battleController', () => {
+  describe('#fixNonDamagingAttack()', () => {
+    it('should return power unchanged', () => {
+      const power = 5;
+      assert.equal(power, fixNonDamagingAttack(power));
+    });
+  });
+});
+
+describe('battleController', () => {
+  describe('#fixNonDamagingAttack()', () => {
+    it('should return 0', () => {
+      const power = null;
+      assert.equal(0, fixNonDamagingAttack(power));
     });
   });
 });

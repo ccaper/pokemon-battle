@@ -413,3 +413,4 @@ module.exports.percentAttackPower = percentAttackPower;
 module.exports.determineWinner = determineWinner;
 module.exports.attackPokemon = attackPokemon;
 module.exports.attackPokemons = attackPokemons;
+module.exports.fixNonDamagingAttack = fixNonDamagingAttack;
