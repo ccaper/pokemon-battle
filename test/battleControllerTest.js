@@ -7,7 +7,8 @@ const {
   attackPokemon,
   attackPokemons,
   fixNonDamagingAttack,
-  shouldGetFutureNonCachedAttack
+  shouldGetFutureNonCachedAttack,
+  pickAFutureNonCachedAttack
 } = require('../controllers/battleController');
 
 describe('battleController', () => {
@@ -193,12 +194,59 @@ describe('battleController', () => {
 });
 
 describe('battleController', () => {
-  describe('#shouldGetFutureNonCachedAttack()', () => {
-    it('both player attacks previously cached, so return false', () => {
+  describe('#pickAFutureNonCachedAttack()', () => {
+    it('future attack available for either player, so return it', () => {
       const cache = [1, 2];
-      const pokemon1Attack = { id: 1 };
-      const pokemon2Attack = { id: 2 };
-      assert.equal(false, shouldGetFutureNonCachedAttack(pokemon1Attack, pokemon2Attack, cache));
+      const player1 = {
+        attacks: [
+          {
+            id: 1
+          },
+          {
+            id: 3
+          }
+        ]
+      };
+      const player2 = {
+        attacks: [
+          {
+            id: 2
+          },
+          {
+            id: 3
+          }
+        ]
+      };
+      assert.equal(3, pickAFutureNonCachedAttack(cache, player1, player2));
+    });
+  });
+});
+
+describe('battleController', () => {
+  describe('#pickAFutureNonCachedAttack()', () => {
+    it('no future attack available for either player, so return null', () => {
+      const cache = [1, 2, 3];
+      const player1 = {
+        attacks: [
+          {
+            id: 1
+          },
+          {
+            id: 3
+          }
+        ]
+      };
+      const player2 = {
+        attacks: [
+          {
+            id: 2
+          },
+          {
+            id: 3
+          }
+        ]
+      };
+      assert.equal(null, pickAFutureNonCachedAttack(cache, player1, player2));
     });
   });
 });
