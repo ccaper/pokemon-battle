@@ -196,7 +196,9 @@ function fixNonDamagingAttack(power) {
 }
 
 /*
-* Calls internal API to get pokemon's info from pokemon API.
+* Calls internal API to get pokemon's info from pokemon API.  Note, I do a performance
+* enhancement here where if user passes in same pokemon for both players, only 1
+* pokemon api fetch is made.
 *
 * pokemon1Identifier: a pokemon's id or name for player1
 * pokemon2Identifier: a pokemon's id or name for player2
@@ -325,7 +327,7 @@ function getFutureNonCachedAttack(pokemon1Attack, pokemon2Attack, cache, pokemon
 /*
 * Hits internal API to get attack info from pokemon API.  Internal API caches request.
 *    If only one attack has previously been cached, get first non cached attack
-*    from either player1 or player2's pokemon for possible performcance improvement
+*    from either player1 or player2's pokemon for possible performance improvement
 *    in future.
 *
 * pokemon1Attack: player1's pokemon's random attack
