@@ -20,6 +20,7 @@ function getApiDataWithRetries(url) {
       } catch (error) {
         apiAttempt += 1;
         responseErrorStatus = error.response.status;
+        console.log(`Error fetching data from ${url}, try #${apiAttempt}, http status code ${responseErrorStatus}`);
       }
     }
     reject(responseErrorStatus);
