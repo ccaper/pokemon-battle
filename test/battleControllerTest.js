@@ -19,22 +19,14 @@ describe('battleController', () => {
       const urlId = getIdFromUrl(url);
       assert.equal(id, urlId);
     });
-  });
-});
 
-describe('battleController', () => {
-  describe('#getIdFromUrl()', () => {
     it('should return NaN since id is not a number in url', () => {
       const id = 'string';
       const url = `http://pokeapi.co/api/v2/move/${id}/`;
       const urlId = getIdFromUrl(url);
       assert.notEqual(Number.NaN, urlId);
     });
-  });
-});
 
-describe('battleController', () => {
-  describe('#getIdFromUrl()', () => {
     it('should return NaN since id is not a number in url due to missing trailing /', () => {
       const id = 1;
       const url = `http://pokeapi.co/api/v2/move/${id}`;
@@ -42,9 +34,7 @@ describe('battleController', () => {
       assert.notEqual(Number.NaN, urlId);
     });
   });
-});
 
-describe('battleController', () => {
   describe('#percentAttackPower()', () => {
     it('should return 10% of number passed in (whole number test)', () => {
       const value = 100;
@@ -52,11 +42,7 @@ describe('battleController', () => {
       const expected = value * 0.1;
       assert.equal(expected, tenPercentOfValue);
     });
-  });
-});
 
-describe('battleController', () => {
-  describe('#percentAttackPower()', () => {
     it('should return 10% of number passed in (float test)', () => {
       const value = 5.5;
       const tenPercentOfValue = percentAttackPower(value);
@@ -64,9 +50,7 @@ describe('battleController', () => {
       assert.equal(expected, tenPercentOfValue);
     });
   });
-});
 
-describe('battleController', () => {
   describe('#determineWinner()', () => {
     it('should return player with larger HP (player1 larger hp test)', () => {
       const player1 = { hp: 10 };
@@ -74,22 +58,14 @@ describe('battleController', () => {
       const winner = determineWinner(player1, player2);
       assert.equal(player1, winner);
     });
-  });
-});
 
-describe('battleController', () => {
-  describe('#determineWinner()', () => {
     it('should return player with larger HP (player2 larger hp test)', () => {
       const player1 = { hp: 5 };
       const player2 = { hp: 10 };
       const winner = determineWinner(player1, player2);
       assert.equal(player2, winner);
     });
-  });
-});
 
-describe('battleController', () => {
-  describe('#determineWinner()', () => {
     it('should return player with larger HP (tie goes to player2)', () => {
       const player1 = { hp: 10 };
       const player2 = { hp: 10 };
@@ -97,9 +73,7 @@ describe('battleController', () => {
       assert.equal(player2, winner);
     });
   });
-});
 
-describe('battleController', () => {
   describe('#attackPokemon()', () => {
     it('should return player HP with attack power damage done', () => {
       const attackPower = 10;
@@ -109,9 +83,7 @@ describe('battleController', () => {
       assert.equal(expected, damagedPlayerHp);
     });
   });
-});
 
-describe('battleController', () => {
   describe('#attackPokemons()', () => {
     it('should return player HP unchanged due to attack on player 2 taking HP below 0', () => {
       const player1Hp = 10;
@@ -123,11 +95,7 @@ describe('battleController', () => {
       const expected = player2Hp - percentAttackPower(player1AttackPower);
       assert.equal(expected, newPokemon2Hp);
     });
-  });
-});
 
-describe('battleController', () => {
-  describe('#attackPokemons()', () => {
     it('should return both player HP changed', () => {
       const player1Hp = 50;
       const player1AttackPower = 90;
@@ -140,27 +108,19 @@ describe('battleController', () => {
       assert.equal(expectedPlayer2, newPokemon2Hp);
     });
   });
-});
 
-describe('battleController', () => {
   describe('#fixNonDamagingAttack()', () => {
     it('should return power unchanged', () => {
       const power = 5;
       assert.equal(power, fixNonDamagingAttack(power));
     });
-  });
-});
 
-describe('battleController', () => {
-  describe('#fixNonDamagingAttack()', () => {
     it('should return 0', () => {
       const power = null;
       assert.equal(0, fixNonDamagingAttack(power));
     });
   });
-});
 
-describe('battleController', () => {
   describe('#shouldGetFutureNonCachedAttack()', () => {
     it('both attacks not previously cached, so return false', () => {
       const cache = [];
@@ -168,32 +128,29 @@ describe('battleController', () => {
       const pokemon2Attack = { id: 2 };
       assert.equal(false, shouldGetFutureNonCachedAttack(pokemon1Attack, pokemon2Attack, cache));
     });
-  });
-});
 
-describe('battleController', () => {
-  describe('#shouldGetFutureNonCachedAttack()', () => {
     it('only player 1 attack previously cached, so return true', () => {
       const cache = [1];
       const pokemon1Attack = { id: 1 };
       const pokemon2Attack = { id: 2 };
       assert.equal(true, shouldGetFutureNonCachedAttack(pokemon1Attack, pokemon2Attack, cache));
     });
-  });
-});
 
-describe('battleController', () => {
-  describe('#shouldGetFutureNonCachedAttack()', () => {
     it('only player 2 attack previously cached, so return true', () => {
       const cache = [2];
       const pokemon1Attack = { id: 1 };
       const pokemon2Attack = { id: 2 };
       assert.equal(true, shouldGetFutureNonCachedAttack(pokemon1Attack, pokemon2Attack, cache));
     });
-  });
-});
 
-describe('battleController', () => {
+    it('both players attacks previously cached, so return false', () => {
+      const cache = [1, 2];
+      const pokemon1Attack = { id: 1 };
+      const pokemon2Attack = { id: 2 };
+      assert.equal(false, shouldGetFutureNonCachedAttack(pokemon1Attack, pokemon2Attack, cache));
+    });
+  });
+
   describe('#pickAFutureNonCachedAttack()', () => {
     it('future attack available for either player, so return it', () => {
       const cache = [1, 2];
@@ -219,11 +176,7 @@ describe('battleController', () => {
       };
       assert.equal(3, pickAFutureNonCachedAttack(cache, player1, player2));
     });
-  });
-});
 
-describe('battleController', () => {
-  describe('#pickAFutureNonCachedAttack()', () => {
     it('no future attack available for either player, so return null', () => {
       const cache = [1, 2, 3];
       const player1 = {
