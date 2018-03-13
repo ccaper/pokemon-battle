@@ -206,13 +206,17 @@ function fixNonDamagingAttack(power) {
 *    player1 and player2
 */
 function getPokemons(pokemon1Identifier, pokemon2Identifier, baseUrl) {
-  return new Promise(async (resolve) => {
+  return new Promise(async (resolve, reject) => {
     const pokemon1Promise = axios.get(`http://${baseUrl}/api/v1/pokemon/${pokemon1Identifier}`);
     const pokemon2Promise = axios.get(`http://${baseUrl}/api/v1/pokemon/${pokemon2Identifier}`);
-    const [pokemon1Response, pokemon2Response] = await Promise.all([pokemon1Promise, pokemon2Promise]);
-    const pokemon1 = stripPokemonResponse(pokemon1Response.data);
-    const pokemon2 = stripPokemonResponse(pokemon2Response.data);
-    resolve({ pokemon1, pokemon2 });
+    try {
+      const [pokemon1Response, pokemon2Response] = await Promise.all([pokemon1Promise, pokemon2Promise]);
+      const pokemon1 = stripPokemonResponse(pokemon1Response.data);
+      const pokemon2 = stripPokemonResponse(pokemon2Response.data);
+      resolve({ pokemon1, pokemon2 });
+    } catch (error) {
+      reject(error);
+    }
   });
 }
 
@@ -323,7 +327,7 @@ function getFutureNonCachedAttack(pokemon1Attack, pokemon2Attack, cache, pokemon
 *    for player1 and player2's pokemon attack info
 */
 function getAttacksInfo(pokemon1Attack, pokemon2Attack, baseUrl, cache, pokemon1, pokemon2) {
-  return new Promise(async (resolve) => {
+  return new Promise(async (resolve, reject) => {
     const pokemon1AttackPromise = axios.get(`http://${baseUrl}/api/v1/attack/${pokemon1Attack.id}`);
     const pokemon2AttackPromise = axios.get(`http://${baseUrl}/api/v1/attack/${pokemon2Attack.id}`);
     const promises = [pokemon1AttackPromise, pokemon2AttackPromise];
@@ -332,10 +336,14 @@ function getAttacksInfo(pokemon1Attack, pokemon2Attack, baseUrl, cache, pokemon1
       const futureAttackPromise = axios.get(`http://${baseUrl}/api/v1/attack/${futureAttack}`);
       promises.push(futureAttackPromise);
     }
-    const [pokemon1AttackResponse, pokemon2AttackResponse] = await Promise.all(promises);
-    const pokemon1AttackInfo = pokemon1AttackResponse.data;
-    const pokemon2AttackInfo = pokemon2AttackResponse.data;
-    resolve({ pokemon1AttackInfo, pokemon2AttackInfo });
+    try {
+      const [pokemon1AttackResponse, pokemon2AttackResponse] = await Promise.all(promises);
+      const pokemon1AttackInfo = pokemon1AttackResponse.data;
+      const pokemon2AttackInfo = pokemon2AttackResponse.data;
+      resolve({ pokemon1AttackInfo, pokemon2AttackInfo });
+    } catch (error) {
+      reject(error);
+    }
   });
 }
 
@@ -367,24 +375,28 @@ function fixNonNonDamaginAttacks(pokemon1AttackInfo, pokemon2AttackInfo) {
 *    of the rounds of the battle
 */
 function performBattle(pokemon1, pokemon2, baseUrl, cache) {
-  return new Promise(async (resolve) => {
+  return new Promise(async (resolve, reject) => {
     const rounds = [];
     let roundCount = 1;
-    while (pokemon1.hp > 0 && pokemon2.hp > 0) {
-      const { pokemon1Attack, pokemon2Attack } = getRandomAttacks(pokemon1, pokemon2);
-      const { pokemon1AttackInfo, pokemon2AttackInfo } = await getAttacksInfo(pokemon1Attack, pokemon2Attack, baseUrl, cache, pokemon1, pokemon2);
-      const { pokemon1AttackPower, pokemon2AttackPower } = fixNonNonDamaginAttacks(pokemon1AttackInfo, pokemon2AttackInfo);
-      const { newPokemon1Hp, newPokemon2Hp } = attackPokemons(pokemon1.hp, pokemon1AttackPower, pokemon2.hp, pokemon2AttackPower);
-      pokemon1.hp = newPokemon1Hp;
-      pokemon2.hp = newPokemon2Hp;
-      rounds.push(createBattleData(
-        roundCount, pokemon1, pokemon1Attack, pokemon1AttackPower, pokemon2,
-        pokemon2Attack, pokemon2AttackPower
-      ));
-      console.log(`completed round #${roundCount} for ${pokemon1.name} (${pokemon1.id}) vs ${pokemon2.name} (${pokemon2.id})`);
-      roundCount += 1;
+    try {
+      while (pokemon1.hp > 0 && pokemon2.hp > 0) {
+        const { pokemon1Attack, pokemon2Attack } = getRandomAttacks(pokemon1, pokemon2);
+        const { pokemon1AttackInfo, pokemon2AttackInfo } = await getAttacksInfo(pokemon1Attack, pokemon2Attack, baseUrl, cache, pokemon1, pokemon2);
+        const { pokemon1AttackPower, pokemon2AttackPower } = fixNonNonDamaginAttacks(pokemon1AttackInfo, pokemon2AttackInfo);
+        const { newPokemon1Hp, newPokemon2Hp } = attackPokemons(pokemon1.hp, pokemon1AttackPower, pokemon2.hp, pokemon2AttackPower);
+        pokemon1.hp = newPokemon1Hp;
+        pokemon2.hp = newPokemon2Hp;
+        rounds.push(createBattleData(
+          roundCount, pokemon1, pokemon1Attack, pokemon1AttackPower, pokemon2,
+          pokemon2Attack, pokemon2AttackPower
+        ));
+        console.log(`completed round #${roundCount} for ${pokemon1.name} (${pokemon1.id}) vs ${pokemon2.name} (${pokemon2.id})`);
+        roundCount += 1;
+      }
+      resolve(rounds);
+    } catch (error) {
+      reject(error);
     }
-    resolve(rounds);
   });
 }
 
@@ -402,7 +414,12 @@ exports.battle = async (req, res) => {
   console.log(`Starting battle for ${pokemon1.name} (${pokemon1.id}) vs ${pokemon2.name} (${pokemon2.id})`);
   const battleData = {};
   battleData.preBattleData = createPreBattleData(pokemon1, pokemon2);
-  battleData.rounds = await performBattle(pokemon1, pokemon2, req.headers.host, myCache);
+  try {
+    battleData.rounds = await performBattle(pokemon1, pokemon2, req.headers.host, myCache);
+  } catch (error) {
+    console.log(`Unrecoverable error trying to fetch data from pokemon API.  Battle ubruptly ended. (${error})`);
+    res.sentStatus(error);
+  }
   battleData.winner = createWinnerData(pokemon1, pokemon2, battleData.rounds.length);
   console.log(`Ending battle for ${pokemon1.name} (${pokemon1.id}) vs ${pokemon2.name} (${pokemon2.id}), winner ${battleData.winner.name} (${battleData.winner.id})`);
   res.json(battleData);
