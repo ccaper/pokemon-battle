@@ -207,12 +207,24 @@ function fixNonDamagingAttack(power) {
 */
 function getPokemons(pokemon1Identifier, pokemon2Identifier, baseUrl) {
   return new Promise(async (resolve, reject) => {
+    const promises = [];
     const pokemon1Promise = axios.get(`http://${baseUrl}/api/v1/pokemon/${pokemon1Identifier}`);
-    const pokemon2Promise = axios.get(`http://${baseUrl}/api/v1/pokemon/${pokemon2Identifier}`);
+    promises.push(pokemon1Promise);
+    if (pokemon1Identifier !== pokemon2Identifier) {
+      const pokemon2Promise = axios.get(`http://${baseUrl}/api/v1/pokemon/${pokemon2Identifier}`);
+      promises.push(pokemon2Promise);
+    }
     try {
-      const [pokemon1Response, pokemon2Response] = await Promise.all([pokemon1Promise, pokemon2Promise]);
-      const pokemon1 = stripPokemonResponse(pokemon1Response.data);
-      const pokemon2 = stripPokemonResponse(pokemon2Response.data);
+      const responses = await Promise.all(promises);
+      let pokemon1 = null;
+      let pokemon2 = null;
+      if (promises.length === 1) {
+        pokemon1 = stripPokemonResponse(responses[0].data);
+        pokemon2 = { ...pokemon1 };
+      } else {
+        pokemon1 = stripPokemonResponse(responses[0].data);
+        pokemon2 = stripPokemonResponse(responses[1].data);
+      }
       resolve({ pokemon1, pokemon2 });
     } catch (error) {
       reject(error);
