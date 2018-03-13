@@ -9,7 +9,8 @@
     "start": "node ./start.js",
     "watch": "nodemon ./start.js --ignore public/",
     "dev": "concurrently \"npm run watch\" \"npm run assets\" --names \"💻,📦\" --prefix name",
-    "assets": "webpack -w --display-max-modules 0"
+    "assets": "webpack -w --display-max-modules 0",
+    "test": "mocha"
   },
   "browserslist": "last 3 versions",
   "dependencies": {
@@ -32,6 +33,7 @@
     "concurrently": "3.4.0",
     "css-loader": "0.27.3",
     "extract-text-webpack-plugin": "2.1.0",
+    "mocha": "5.0.4",
     "node-sass": "4.5.3",
     "nodemon": "1.11.0",
     "now": "^6.4.1",

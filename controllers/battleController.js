@@ -407,3 +407,5 @@ exports.battle = async (req, res) => {
   console.log(`Ending battle for ${pokemon1.name} (${pokemon1.id}) vs ${pokemon2.name} (${pokemon2.id}), winner ${battleData.winner.name} (${battleData.winner.id})`);
   res.json(battleData);
 };
+
+module.exports.getIdFromUrl = getIdFromUrl;
