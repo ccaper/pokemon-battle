@@ -411,3 +411,5 @@ exports.battle = async (req, res) => {
 module.exports.getIdFromUrl = getIdFromUrl;
 module.exports.percentAttackPower = percentAttackPower;
 module.exports.determineWinner = determineWinner;
+module.exports.attackPokemon = attackPokemon;
+module.exports.attackPokemons = attackPokemons;
