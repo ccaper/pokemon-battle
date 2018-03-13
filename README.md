@@ -36,6 +36,10 @@ To run the application, please make sure you're running at least Node 7.
 1. `npm install`
 2. `npm run dev`
 
+To run tests:
+
+1. `npm run test`
+
 ## Endpoints
 
 1. ​single​ ​pokemon​ ​overview: `http://localhost:7777/api/v1/pokemon/<identifier>`
@@ -75,3 +79,7 @@ To run the application, please make sure you're running at least Node 7.
 1. I have a simple HTML front end simply for showing 404.  Any non api route no match shows a 404 page.  For example http://localhost:7777/
 2. Any api route no match returns a 404.  For example http://localhost:7777/api/v1/blah/72
 3. I versioned my api to v1, as api's should always be versioned.
+
+## Testing
+
+I am using the Mocha framework for unit tests.  All unit tests live in test directory.
