@@ -319,6 +319,9 @@ function pickAFutureNonCachedAttack(cacheAttackKeyAttackIds, pokemon1, pokemon2)
 function getFutureNonCachedAttack(pokemon1Attack, pokemon2Attack, cache, pokemon1, pokemon2) {
   const cacheAttackKeyAttackIds = cache.keys().filter(key => key.startsWith('attack-')).map(key1 => parseInt(key1.split('-')[1], 10));
   if (shouldGetFutureNonCachedAttack(pokemon1Attack, pokemon2Attack, cacheAttackKeyAttackIds)) {
+    // add current attack id's on cache so we don't get a future attack that is the same as a current
+    cacheAttackKeyAttackIds.push(pokemon1Attack.id);
+    cacheAttackKeyAttackIds.push(pokemon2Attack.id);
     return pickAFutureNonCachedAttack(cacheAttackKeyAttackIds, pokemon1, pokemon2);
   }
   return null;
