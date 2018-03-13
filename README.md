@@ -1,4 +1,4 @@
-# Tempus Code Challenge
+# Tempus Code Challenge (Pokemon Battle)
 
 ## Description
 
@@ -70,7 +70,7 @@ To run the application, please make sure you're running at least Node 7.
 4. I include log statements to show cache hits and misses.
 5. I included log statements to show start of battle, when each round of a battle is completed, and when a complete battle is finished, along with the winner, so you can see things are moving on a request as the pokemon API is EXTREMELY slow in response.
 
-##Other
+## Other
 
 1. I have a simple HTML front end simply for showing 404.  Any non api route no match shows a 404 page.  For example `http://localhost:7777/`
 2. Any api route no match returns a 404.  For example `http://localhost:7777/api/v1/blah/72`
