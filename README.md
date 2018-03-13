@@ -69,3 +69,9 @@ To run the application, please make sure you're running at least Node 7.
 3. When in battle, I fetch the attacks for player1 and player2 as a pair, using promise all, for performance, through my own local app API, which is caching the pokemon API response.  To further increase performance, should ONLY one of those attack info requests already be cached, I put in a third attack from either player 1 or player 2 pokemon attacks that is the first non cached attack, if any available.  The thought is since I am using promise all, 2 attack requests take the same time as 1, so might as well request a future possible attack so it's now cached.
 4. I include log statements to show cache hits and misses.
 5. I included log statements to show start of battle, when each round of a battle is completed, and when a complete battle is finished, along with the winner, so you can see things are moving on a request as the pokemon API is EXTREMELY slow in response.
+
+##Other
+
+1. I have a simple HTML front end simply for showing 404.  Any non api route no match shows a 404 page.  For example `http://localhost:7777/`
+2. Any api route no match returns a 404.  For example `http://localhost:7777/api/v1/blah/72`
+3. I versioned my api to v1, as api's should always be versioned.
