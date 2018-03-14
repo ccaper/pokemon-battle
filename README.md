@@ -44,7 +44,7 @@ The​ ​API​ ​should​ ​have​ ​3 ​routes:
 To run the application, please make sure you're running at least Node 7.
 
 1. `npm install`
-2. `npm run dev`
+2. `npm run dev` (for initial build using webpack for sass, afterwards you can simply use `npm run watch`)
 
 To run tests:
 
