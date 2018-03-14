@@ -29,6 +29,16 @@ The​ ​API​ ​should​ ​have​ ​3 ​routes:
 
   Return​ ​the​ ​winner,​ and​ ​the​ ​history​ of​ ​the​ ​fight
 
+## Tech Stack
+
+1. Node above 7 for promises with async await
+2. Express server
+3. webpack for simple sass and HTML to handle non API 404's
+4. PUG template engine for non API 404's
+5. Axios for handling API calls
+6. node-cache for caching pokemon API responses (reddis would be better for production)
+7. Mocha framework for unit tests
+
 ## Instructions
 
 To run the application, please make sure you're running at least Node 7.
