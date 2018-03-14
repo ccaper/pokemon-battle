@@ -83,7 +83,7 @@ To run tests:
 
 ## Notes
 
-1. I have been difficulty with the pokemon api Server.  I'm often getting gateway
+1. I have been having difficulty with the pokemon api Server.  I'm often getting gateway
 timeouts (502 errors) or too many requests(429 errors; appears they are recently
 aggressively throttling requests).  And the api is at times EXTREMELY slow to respond,
 causing my Postman client to timeout.  As a result to the 502 errors, I wrapped pokemon
