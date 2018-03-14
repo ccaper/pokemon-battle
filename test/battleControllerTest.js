@@ -90,10 +90,10 @@ describe('battleController', () => {
       const player1AttackPower = 100;
       const player2Hp = 5;
       const player2AttackPower = 100;
-      const { newPokemon1Hp, newPokemon2Hp } = attackPokemons(player1Hp, player1AttackPower, player2Hp, player2AttackPower);
-      assert.equal(player1Hp, newPokemon1Hp);
+      const { damagedPokemon1Hp, damagedPokemon2Hp } = attackPokemons(player1Hp, player1AttackPower, player2Hp, player2AttackPower);
+      assert.equal(player1Hp, damagedPokemon1Hp);
       const expected = player2Hp - computeAttackDamage(player1AttackPower);
-      assert.equal(expected, newPokemon2Hp);
+      assert.equal(expected, damagedPokemon2Hp);
     });
 
     it('should return both player HP changed', () => {
@@ -102,10 +102,10 @@ describe('battleController', () => {
       const player2Hp = 40;
       const player2AttackPower = 100;
       const expectedPlayer1 = player1Hp - computeAttackDamage(player2AttackPower);
-      const { newPokemon1Hp, newPokemon2Hp } = attackPokemons(player1Hp, player1AttackPower, player2Hp, player2AttackPower);
-      assert.equal(expectedPlayer1, newPokemon1Hp);
+      const { damagedPokemon1Hp, damagedPokemon2Hp } = attackPokemons(player1Hp, player1AttackPower, player2Hp, player2AttackPower);
+      assert.equal(expectedPlayer1, damagedPokemon1Hp);
       const expectedPlayer2 = player2Hp - computeAttackDamage(player1AttackPower);
-      assert.equal(expectedPlayer2, newPokemon2Hp);
+      assert.equal(expectedPlayer2, damagedPokemon2Hp);
     });
   });
 
