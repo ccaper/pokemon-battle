@@ -49,6 +49,7 @@ function stripPokemonResponse(pokemonResponse) {
 * returns: pre battle pokemon JSON
 */
 function createPreBattleData(pokemon1, pokemon2) {
+  // need to make copy of pokemons so HP field shows data before battle
   const pokemon1Copy = { ...pokemon1 };
   const pokemon2Copy = { ...pokemon2 };
   const preBattleData = {
