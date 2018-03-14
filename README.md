@@ -31,7 +31,7 @@ The​ ​API​ ​should​ ​have​ ​3 ​routes:
 
 ## Tech Stack
 
-1. Node above 7 for promises with async await
+1. Node 7 or above for promises with async await
 2. Express server
 3. webpack for simple sass and HTML to handle non API 404's
 4. PUG template engine for non API 404's
