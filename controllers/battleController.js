@@ -49,17 +49,11 @@ function stripPokemonResponse(pokemonResponse) {
 * returns: pre battle pokemon JSON
 */
 function createPreBattleData(pokemon1, pokemon2) {
+  const pokemon1Copy = { ...pokemon1 };
+  const pokemon2Copy = { ...pokemon2 };
   const preBattleData = {
-    pokemon1: {
-      id: pokemon1.id,
-      name: pokemon1.name,
-      hp: pokemon1.hp
-    },
-    pokemon2: {
-      id: pokemon2.id,
-      name: pokemon2.name,
-      hp: pokemon2.hp
-    },
+    pokemon1: pokemon1Copy,
+    pokemon2: pokemon2Copy
   };
   return preBattleData;
 }
@@ -100,7 +94,7 @@ function createBattleData(roundCount, pokemon1, attack1, attack1Power, pokemon2,
         id: attack1.id,
         name: attack1.name,
         power: attack1Power,
-        tenPercentPower: computeAttackDamage(attack1Power)
+        damage: computeAttackDamage(attack1Power)
       }
     },
     pokemon2: {
@@ -111,7 +105,7 @@ function createBattleData(roundCount, pokemon1, attack1, attack1Power, pokemon2,
         id: attack2.id,
         name: attack2.name,
         power: attack2Power,
-        tenPercentPower: computeAttackDamage(attack2Power)
+        damage: computeAttackDamage(attack2Power)
       }
     },
   };
