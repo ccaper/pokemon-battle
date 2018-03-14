@@ -18,6 +18,7 @@ exports.single = async (req, res) => {
   const { identifier } = req.params;
   const { myCache } = res.locals;
   const cached = myCache.get(`pokemon-${identifier}`);
+  // returned cache if cached
   if (cached !== undefined) {
     console.log(`cache hit for pokemon ${identifier}`);
     res.json(cached);
@@ -25,6 +26,7 @@ exports.single = async (req, res) => {
   }
   console.log(`cache miss for pokemon ${identifier}`);
   try {
+    // get api data and cache
     const response = await getApiDataWithRetries(`http://pokeapi.co/api/v2/pokemon/${identifier}/`);
     myCache.set(`pokemon-${identifier}`, response);
     res.json(response);

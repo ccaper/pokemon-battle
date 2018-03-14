@@ -2,7 +2,7 @@ const assert = require('assert');
 
 const {
   getIdFromUrl,
-  percentAttackPower,
+  computeAttackDamage,
   determineWinner,
   attackPokemon,
   attackPokemons,
@@ -35,17 +35,17 @@ describe('battleController', () => {
     });
   });
 
-  describe('#percentAttackPower()', () => {
+  describe('#computeAttackDamage()', () => {
     it('should return 10% of number passed in (whole number test)', () => {
       const value = 100;
-      const tenPercentOfValue = percentAttackPower(value);
+      const tenPercentOfValue = computeAttackDamage(value);
       const expected = value * 0.1;
       assert.equal(expected, tenPercentOfValue);
     });
 
     it('should return 10% of number passed in (float test)', () => {
       const value = 5.5;
-      const tenPercentOfValue = percentAttackPower(value);
+      const tenPercentOfValue = computeAttackDamage(value);
       const expected = value * 0.1;
       assert.equal(expected, tenPercentOfValue);
     });
@@ -79,7 +79,7 @@ describe('battleController', () => {
       const attackPower = 10;
       const playerHp = 10;
       const damagedPlayerHp = attackPokemon(attackPower, playerHp);
-      const expected = playerHp - percentAttackPower(attackPower);
+      const expected = playerHp - computeAttackDamage(attackPower);
       assert.equal(expected, damagedPlayerHp);
     });
   });
@@ -92,7 +92,7 @@ describe('battleController', () => {
       const player2AttackPower = 100;
       const { newPokemon1Hp, newPokemon2Hp } = attackPokemons(player1Hp, player1AttackPower, player2Hp, player2AttackPower);
       assert.equal(player1Hp, newPokemon1Hp);
-      const expected = player2Hp - percentAttackPower(player1AttackPower);
+      const expected = player2Hp - computeAttackDamage(player1AttackPower);
       assert.equal(expected, newPokemon2Hp);
     });
 
@@ -101,10 +101,10 @@ describe('battleController', () => {
       const player1AttackPower = 90;
       const player2Hp = 40;
       const player2AttackPower = 100;
-      const expectedPlayer1 = player1Hp - percentAttackPower(player2AttackPower);
+      const expectedPlayer1 = player1Hp - computeAttackDamage(player2AttackPower);
       const { newPokemon1Hp, newPokemon2Hp } = attackPokemons(player1Hp, player1AttackPower, player2Hp, player2AttackPower);
       assert.equal(expectedPlayer1, newPokemon1Hp);
-      const expectedPlayer2 = player2Hp - percentAttackPower(player1AttackPower);
+      const expectedPlayer2 = player2Hp - computeAttackDamage(player1AttackPower);
       assert.equal(expectedPlayer2, newPokemon2Hp);
     });
   });

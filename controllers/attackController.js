@@ -18,6 +18,7 @@ exports.single = async (req, res) => {
   const { attackId } = req.params;
   const { myCache } = res.locals;
   const cached = myCache.get(`attack-${attackId}`);
+  // returned cache if cached
   if (cached !== undefined) {
     console.log(`cache hit for attack ${attackId}`);
     res.json(cached);
@@ -25,6 +26,7 @@ exports.single = async (req, res) => {
   }
   console.log(`cache miss for attack ${attackId}`);
   try {
+    // get api data and cache
     const response = await getApiDataWithRetries(`http://pokeapi.co/api/v2/move/${attackId}/`);
     myCache.set(`attack-${attackId}`, response);
     res.json(response);
