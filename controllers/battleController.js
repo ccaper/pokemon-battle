@@ -9,7 +9,7 @@ const { uniq } = require('lodash');
 /*
 * Extract id embedded in URL as last path component before ending /.
 *
-* url: fully qualified url
+* url: string for fully qualified url
 *
 * returns: id as number.
 */
@@ -186,7 +186,7 @@ function attackPokemons(pokemon1Hp, pokemon1AttackPower, pokemon2Hp, pokemon2Att
 /*
 * Some pokemon attack info has null for it's power (non damaging attack).  This sets it to 0 if null.
 *
-* power: pokemon attack api power
+* power: number for pokemon attack api power
 *
 * returns: 0 if null, otherwise the power
 */
@@ -353,7 +353,7 @@ function getFutureNonCachedAttack(pokemon1Attack, pokemon2Attack, cache, pokemon
 * player's pokemons could have overlapping attacks, and when each player's attack
 * is randomly chosen, could both be the same, thus generating two fetches for the same
 * attack info.  When this happens, if the duplicate attack is cached, I should not attempt
-* to sneak in a future attack for fetch, but uf the duplicate attack is not cached,
+* to sneak in a future attack for fetch, but if the duplicate attack is not cached,
 * I should sneak in a future attack for fetch as a spot in the fetch pipeline is
 * available (always try to fetch 2 attacks at same time).
 *
